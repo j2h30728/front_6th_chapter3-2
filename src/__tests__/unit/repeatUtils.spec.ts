@@ -20,4 +20,23 @@ describe('generateRecurringDates >', () => {
     expect(result).toEqual([event.date]);
     expect(result).toHaveLength(1);
   });
+
+  it('repeat.type이 "daily"이면 시작일부터 종료일까지 매일 날짜를 생성한다', () => {
+    const event: Event = {
+      id: '1',
+      date: '2025-08-01',
+      startTime: '14:00',
+      endTime: '16:00',
+      title: '이벤트 1',
+      description: '',
+      location: '',
+      category: '',
+      repeat: { type: 'daily', interval: 1, endDate: '2025-08-05' },
+      notificationTime: 0,
+    };
+
+    const result = generateRecurringDates(event);
+    expect(result).toEqual(['2025-08-01', '2025-08-02', '2025-08-03', '2025-08-04', '2025-08-05']);
+    expect(result).toHaveLength(5);
+  });
 });
