@@ -63,6 +63,7 @@ export function generateRecurringDates(event: Event) {
 
   if (repeatType === 'yearly') {
     const endDate = event.repeat.endDate || '2025-10-30';
+    const interval = event.repeat.interval || 1;
     const endDateTime = new Date(endDate).getTime();
 
     const dateArr = [];
@@ -72,7 +73,7 @@ export function generateRecurringDates(event: Event) {
       dateArr.push(formatDate(currentDate));
 
       const nextYear = new Date(currentDate);
-      nextYear.setFullYear(nextYear.getFullYear() + 1);
+      nextYear.setFullYear(nextYear.getFullYear() + interval);
 
       currentDate = nextYear;
     }
