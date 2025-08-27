@@ -49,12 +49,19 @@ export function generateRecurringDates(event: Event) {
 
     const dateArr = [];
     let currentDate = new Date(event.date);
+    const originalDate = currentDate.getDate();
 
     while (currentDate.getTime() <= endDateTime) {
-      dateArr.push(formatDate(currentDate));
+      if (currentDate.getDate() === originalDate) {
+        dateArr.push(formatDate(currentDate));
+      }
 
       const nextMonth = new Date(currentDate);
       nextMonth.setMonth(nextMonth.getMonth() + interval);
+
+      if (nextMonth.getDate() !== originalDate) {
+        nextMonth.setDate(originalDate);
+      }
 
       currentDate = nextMonth;
     }
