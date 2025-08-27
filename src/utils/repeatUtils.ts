@@ -4,6 +4,14 @@ import { formatDate } from './dateUtils';
 const ONE_DAY = 60 * 60 * 24 * 1000;
 const ONE_WEEK = 60 * 60 * 24 * 7 * 1000;
 
+function getRepeatConfig(event: Event) {
+  return {
+    endDate: event.repeat.endDate || '2025-10-30',
+    interval: event.repeat.interval || 1,
+    endDateTime: new Date(event.repeat.endDate || '2025-10-30').getTime(),
+  };
+}
+
 export function generateRecurringDates(event: Event) {
   const repeatType = event.repeat.type;
   const startData = event.date;
@@ -13,9 +21,7 @@ export function generateRecurringDates(event: Event) {
   }
 
   if (repeatType === 'daily') {
-    const endDate = event.repeat.endDate || '2025-10-30';
-    const interval = event.repeat.interval || 1;
-    const endDateTime = new Date(endDate).getTime();
+    const { endDateTime, interval } = getRepeatConfig(event);
     const startDateTime = new Date(event.date).getTime();
 
     const dateArr = [];
@@ -28,9 +34,7 @@ export function generateRecurringDates(event: Event) {
   }
 
   if (repeatType === 'weekly') {
-    const endDate = event.repeat.endDate || '2025-10-30';
-    const interval = event.repeat.interval || 1;
-    const endDateTime = new Date(endDate).getTime();
+    const { endDateTime, interval } = getRepeatConfig(event);
     const startDateTime = new Date(event.date).getTime();
 
     const dateArr = [];
@@ -43,9 +47,7 @@ export function generateRecurringDates(event: Event) {
   }
 
   if (repeatType === 'monthly') {
-    const endDate = event.repeat.endDate || '2025-10-30';
-    const interval = event.repeat.interval || 1;
-    const endDateTime = new Date(endDate).getTime();
+    const { endDateTime, interval } = getRepeatConfig(event);
 
     const dateArr = [];
     let currentDate = new Date(event.date);
@@ -58,20 +60,14 @@ export function generateRecurringDates(event: Event) {
 
       const nextMonth = new Date(currentDate);
       nextMonth.setMonth(nextMonth.getMonth() + interval);
-
-      if (nextMonth.getDate() !== originalDate) {
-        nextMonth.setDate(originalDate);
-      }
-
+      nextMonth.setDate(originalDate);
       currentDate = nextMonth;
     }
     return dateArr;
   }
 
   if (repeatType === 'yearly') {
-    const endDate = event.repeat.endDate || '2025-10-30';
-    const interval = event.repeat.interval || 1;
-    const endDateTime = new Date(endDate).getTime();
+    const { endDateTime, interval } = getRepeatConfig(event);
 
     const dateArr = [];
     let currentDate = new Date(event.date);
@@ -85,13 +81,8 @@ export function generateRecurringDates(event: Event) {
 
       const nextYear = new Date(currentDate);
       nextYear.setFullYear(nextYear.getFullYear() + interval);
-
-      if (nextYear.getMonth() !== originalMonth || nextYear.getDate() !== originalDate) {
-        nextYear.setFullYear(nextYear.getFullYear() + interval);
-        nextYear.setMonth(originalMonth);
-        nextYear.setDate(originalDate);
-      }
-
+      nextYear.setMonth(originalMonth);
+      nextYear.setDate(originalDate);
       currentDate = nextYear;
     }
     return dateArr;
