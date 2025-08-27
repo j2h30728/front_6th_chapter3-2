@@ -14,6 +14,7 @@ export function generateRecurringDates(event: Event) {
 
   if (repeatType === 'daily') {
     const endDate = event.repeat.endDate || '2025-10-30';
+    const interval = event.repeat.interval || 1;
     const endDateTime = new Date(endDate).getTime();
     const startDateTime = new Date(event.date).getTime();
 
@@ -21,7 +22,7 @@ export function generateRecurringDates(event: Event) {
     let temp = startDateTime;
     while (temp <= endDateTime) {
       dateArr.push(formatDate(new Date(temp)));
-      temp += ONE_DAY;
+      temp += ONE_DAY * interval;
     }
     return dateArr;
   }
