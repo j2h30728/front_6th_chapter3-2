@@ -77,4 +77,23 @@ describe('generateRecurringDates >', () => {
     expect(result).toEqual(['2025-08-01', '2025-09-01', '2025-10-01']);
     expect(result).toHaveLength(3);
   });
+
+  it('repeat.type이 "yearly"이면 시작일부터 종료일까지 매년 날짜를 생성한다.', () => {
+    const event: Event = {
+      id: '1',
+      date: '2025-08-01',
+      startTime: '14:00',
+      endTime: '16:00',
+      title: '이벤트 1',
+      description: '',
+      location: '',
+      category: '',
+      repeat: { type: 'yearly', interval: 1, endDate: '2027-08-01' },
+      notificationTime: 0,
+    };
+
+    const result = generateRecurringDates(event);
+    expect(result).toEqual(['2025-08-01', '2026-08-01', '2027-08-01']);
+    expect(result).toHaveLength(3);
+  });
 });
