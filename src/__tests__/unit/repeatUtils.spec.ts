@@ -96,4 +96,31 @@ describe('generateRecurringDates >', () => {
     expect(result).toEqual(['2025-08-01', '2026-08-01', '2027-08-01']);
     expect(result).toHaveLength(3);
   });
+
+  it('repeat.type이 "daily"이고 interval이 5일 때, 시작일부터 종료일까지 5일 간격으로 날짜를 생성한다.', () => {
+    const event: Event = {
+      id: '1',
+      date: '2025-08-01',
+      startTime: '14:00',
+      endTime: '16:00',
+      title: '이벤트 1',
+      description: '',
+      location: '',
+      category: '',
+      repeat: { type: 'daily', interval: 5, endDate: '2025-09-01' },
+      notificationTime: 0,
+    };
+
+    const result = generateRecurringDates(event);
+    expect(result).toEqual([
+      '2025-08-01',
+      '2025-08-06',
+      '2025-08-11',
+      '2025-08-16',
+      '2025-08-21',
+      '2025-08-26',
+      '2025-08-31',
+    ]);
+    expect(result).toHaveLength(7);
+  });
 });
