@@ -180,4 +180,23 @@ describe('generateRecurringDates >', () => {
     expect(result).toEqual(['2025-08-01', '2027-08-01']);
     expect(result).toHaveLength(2);
   });
+
+  it('윤년 2월 29일부터 yearly 반복 시, 윤년인 해의 2월 29일만 생성한다.', () => {
+    const event: Event = {
+      id: '1',
+      date: '2020-02-29',
+      startTime: '14:00',
+      endTime: '16:00',
+      title: '이벤트 1',
+      description: '',
+      location: '',
+      category: '',
+      repeat: { type: 'yearly', interval: 1, endDate: '2025-10-30' },
+      notificationTime: 0,
+    };
+
+    const result = generateRecurringDates(event);
+    expect(result).toEqual(['2020-02-29', '2024-02-29']);
+    expect(result).toHaveLength(2);
+  });
 });
