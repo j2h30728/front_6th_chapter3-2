@@ -68,12 +68,22 @@ export function generateRecurringDates(event: Event) {
 
     const dateArr = [];
     let currentDate = new Date(event.date);
+    const originalMonth = currentDate.getMonth();
+    const originalDate = currentDate.getDate();
 
     while (currentDate.getTime() <= endDateTime) {
-      dateArr.push(formatDate(currentDate));
+      if (currentDate.getMonth() === originalMonth && currentDate.getDate() === originalDate) {
+        dateArr.push(formatDate(currentDate));
+      }
 
       const nextYear = new Date(currentDate);
       nextYear.setFullYear(nextYear.getFullYear() + interval);
+
+      if (nextYear.getMonth() !== originalMonth || nextYear.getDate() !== originalDate) {
+        nextYear.setFullYear(nextYear.getFullYear() + interval);
+        nextYear.setMonth(originalMonth);
+        nextYear.setDate(originalDate);
+      }
 
       currentDate = nextYear;
     }
