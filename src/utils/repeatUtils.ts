@@ -2,6 +2,7 @@ import { Event } from '../types';
 import { formatDate } from './dateUtils';
 
 const ONE_DAY = 60 * 60 * 24 * 1000;
+const ONE_WEEK = 60 * 60 * 24 * 7 * 1000;
 
 export function generateRecurringDates(event: Event) {
   const repeatType = event.repeat.type;
@@ -21,6 +22,20 @@ export function generateRecurringDates(event: Event) {
     while (temp <= endDateTime) {
       dateArr.push(formatDate(new Date(temp)));
       temp += ONE_DAY;
+    }
+    return dateArr;
+  }
+
+  if (repeatType === 'weekly') {
+    const endDate = event.repeat.endDate || '2025-10-30';
+    const endDateTime = new Date(endDate).getTime();
+    const startDateTime = new Date(event.date).getTime();
+
+    const dateArr = [];
+    let temp = startDateTime;
+    while (temp <= endDateTime) {
+      dateArr.push(formatDate(new Date(temp)));
+      temp += ONE_WEEK;
     }
     return dateArr;
   }
