@@ -43,6 +43,7 @@ export function generateRecurringDates(event: Event) {
 
   if (repeatType === 'monthly') {
     const endDate = event.repeat.endDate || '2025-10-30';
+    const interval = event.repeat.interval || 1;
     const endDateTime = new Date(endDate).getTime();
 
     const dateArr = [];
@@ -52,7 +53,7 @@ export function generateRecurringDates(event: Event) {
       dateArr.push(formatDate(currentDate));
 
       const nextMonth = new Date(currentDate);
-      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      nextMonth.setMonth(nextMonth.getMonth() + interval);
 
       currentDate = nextMonth;
     }
