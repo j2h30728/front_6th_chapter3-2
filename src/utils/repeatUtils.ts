@@ -25,5 +25,23 @@ export function generateRecurringDates(event: Event) {
     return dateArr;
   }
 
+  if (repeatType === 'monthly') {
+    const endDate = event.repeat.endDate || '2025-10-30';
+    const endDateTime = new Date(endDate).getTime();
+
+    const dateArr = [];
+    let currentDate = new Date(event.date);
+
+    while (currentDate.getTime() <= endDateTime) {
+      dateArr.push(formatDate(currentDate));
+
+      const nextMonth = new Date(currentDate);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+      currentDate = nextMonth;
+    }
+    return dateArr;
+  }
+
   return event;
 }
