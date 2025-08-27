@@ -199,4 +199,23 @@ describe('generateRecurringDates >', () => {
     expect(result).toEqual(['2020-02-29', '2024-02-29']);
     expect(result).toHaveLength(2);
   });
+
+  it('3월 31일부터 monthly 반복 시, 31일이 있는 달만 생성한다.', () => {
+    const event: Event = {
+      id: '1',
+      date: '2025-03-31',
+      startTime: '14:00',
+      endTime: '16:00',
+      title: '이벤트 1',
+      description: '',
+      location: '',
+      category: '',
+      repeat: { type: 'monthly', interval: 1, endDate: '2025-10-30' },
+      notificationTime: 0,
+    };
+
+    const result = generateRecurringDates(event);
+    expect(result).toEqual(['2025-03-31', '2025-05-31', '2025-07-31', '2025-08-31']);
+    expect(result).toHaveLength(4);
+  });
 });
