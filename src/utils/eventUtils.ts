@@ -62,8 +62,16 @@ export function getFilteredEvents(
  * @param events 이벤트 배열
  * @returns 그룹화된 이벤트 객체 (키: 그룹 식별자, 값: 이벤트 배열)
  */
-export const groupRepeatingEvents = (_events: Event[]) => {
+export const groupRepeatingEvents = (events: Event[]) => {
   const grouped: { [key: string]: Event[] } = {};
+
+  events.forEach((event) => {
+    const key = event.repeat.type + event.repeat.interval + event.repeat.endDate;
+    if (!grouped[key]) {
+      grouped[key] = [];
+    }
+    grouped[key].push(event);
+  });
 
   return grouped;
 };
