@@ -1,10 +1,10 @@
-import { Event } from '../types';
+import { Event, EventForm } from '../types';
 import { formatDate } from './dateUtils';
 
 const ONE_DAY = 60 * 60 * 24 * 1000;
 const ONE_WEEK = 60 * 60 * 24 * 7 * 1000;
 
-function getRepeatConfig(event: Event) {
+function getRepeatConfig(event: Event | EventForm) {
   return {
     endDate: event.repeat.endDate || '2025-10-30',
     interval: event.repeat.interval || 1,
@@ -12,7 +12,7 @@ function getRepeatConfig(event: Event) {
   };
 }
 
-export function generateRecurringDates(event: Event) {
+export function generateRecurringDates(event: Event | EventForm) {
   const repeatType = event.repeat.type;
   const startData = event.date;
 
