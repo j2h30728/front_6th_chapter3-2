@@ -145,4 +145,31 @@ describe('반복 일정', () => {
     const monthView = within(screen.getByTestId('month-view'));
     expect(monthView.getAllByText('주간 스탠드업')).toHaveLength(5);
   });
+
+  it('반복 종료일까지 반복 일정이 정확히 생성된다', async () => {
+    setupMockHandlerRepeatEventCreation();
+    const { user } = setup();
+
+    await saveRepeatingSchedule(user, {
+      title: '주간 스탠드업',
+      date: '2025-10-02',
+      startTime: '09:00',
+      endTime: '09:15',
+      description: '팀 스탠드업',
+      location: '회의실 A',
+      category: '업무',
+      repeat: { type: 'weekly', interval: 1, endDate: '2025-10-30' },
+    });
+
+    const monthView = within(screen.getByTestId('month-view'));
+
+    expect(monthView.getAllByText('주간 스탠드업')).toHaveLength(5);
+
+    const repeatEvents = monthView.getAllByText('주간 스탠드업');
+    expect(repeatEvents.length).toBeGreaterThan(0);
+
+    repeatEvents.forEach((event) => {
+      expect(event).toHaveTextContent('주간 스탠드업');
+    });
+  });
 });
