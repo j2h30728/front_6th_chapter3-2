@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent, UserEvent } from '@testing-library/user-event';
 import { SnackbarProvider } from 'notistack';
+import { debug } from 'vitest-preview';
 
 import { setupMockHandlerRepeatEventCreation } from '../__mocks__/handlersUtils';
 import App from '../App';
@@ -100,5 +101,27 @@ describe('반복 일정', () => {
       repeat: { type: 'weekly', interval: 1, endDate: '2025-10-30' },
     });
     expect(await screen.findByText('일정이 추가되었습니다.')).toBeInTheDocument();
+  });
+
+  it('등록된 반복 일정이 리스트에서는 한 번만 표시되고 뷰에서는 여러 번 표시된다', async () => {
+    setupMockHandlerRepeatEventCreation();
+    const { user } = setup();
+
+    await saveRepeatingSchedule(user, {
+      title: '주간 스탠드업',
+      date: '2025-10-02',
+      startTime: '09:00',
+      endTime: '09:15',
+      description: '팀 스탠드업',
+      location: '회의실 A',
+      category: '업무',
+      repeat: { type: 'weekly', interval: 1, endDate: '2025-10-30' },
+    });
+
+    const eventList = within(screen.getByTestId('event-list'));
+    expect(eventList.getByText('주간 스탠드업')).toBeInTheDocument();
+
+    const monthView = within(screen.getByTestId('month-view'));
+    expect(monthView.getAllByText('주간 스탠드업')).toHaveLength(5);
   });
 });
