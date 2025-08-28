@@ -1,5 +1,5 @@
-import { Event } from '../../types';
-import { generateRecurringDates } from '../../utils/repeatUtils';
+import { Event } from '../../../types';
+import { generateRecurringDates } from '../../../utils/repeatUtils';
 
 describe('generateRecurringDates >', () => {
   describe('정상 동작', () => {

@@ -5,8 +5,8 @@ import { userEvent, UserEvent } from '@testing-library/user-event';
 import { SnackbarProvider } from 'notistack';
 import { debug } from 'vitest-preview';
 
-import { setupMockHandlerRepeatEventCreation } from '../__mocks__/handlersUtils';
-import App from '../App';
+import { setupMockHandlerRepeatEventCreation } from '../../__mocks__/handlersUtils';
+import App from '../../App';
 
 const theme = createTheme();
 
