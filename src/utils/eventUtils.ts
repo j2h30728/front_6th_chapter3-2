@@ -56,3 +56,14 @@ export function getFilteredEvents(
 
   return searchedEvents;
 }
+
+/**
+ * 반복 일정을 그룹화하는 함수
+ * @param events 이벤트 배열
+ * @returns 그룹화된 이벤트 객체 (키: 그룹 식별자, 값: 이벤트 배열)
+ */
+export const groupRepeatingEvents = (_events: Event[]) => {
+  const grouped: { [key: string]: Event[] } = {};
+
+  return grouped;
+};
