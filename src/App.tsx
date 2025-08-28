@@ -30,6 +30,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 
+import RepeatIcon from './components/icons.tsx';
 import { useCalendarView } from './hooks/useCalendarView.ts';
 import { useEventForm } from './hooks/useEventForm.ts';
 import { useEventOperations } from './hooks/useEventOperations.ts';
@@ -184,6 +185,7 @@ function App() {
                       )
                       .map((event) => {
                         const isNotified = notifiedEvents.includes(event.id);
+                        const isRepeating = event.repeat.type !== 'none';
 
                         return (
                           <Box
@@ -207,6 +209,7 @@ function App() {
                                 noWrap
                                 sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}
                               >
+                                {isRepeating && <RepeatIcon />}
                                 {event.title}
                               </Typography>
                             </Stack>
@@ -272,6 +275,7 @@ function App() {
                             )}
                             {getEventsForDay(filteredEvents, day).map((event) => {
                               const isNotified = notifiedEvents.includes(event.id);
+                              const isRepeating = event.repeat.type !== 'none';
 
                               return (
                                 <Box
@@ -295,6 +299,7 @@ function App() {
                                       noWrap
                                       sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}
                                     >
+                                      {isRepeating && <RepeatIcon />}
                                       {event.title}
                                     </Typography>
                                   </Stack>
