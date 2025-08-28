@@ -51,5 +51,49 @@ describe('groupRepeatingEvents >', () => {
       expect(result[groupKey][1].title).toBe('주간 스탠드업');
       expect(result[groupKey][2].title).toBe('주간 스탠드업');
     });
+
+    it('다른 제목과 다른 반복 설정을 가진 반복일정들은 별도 그룹으로 분리한다', () => {
+      const events: Event[] = [
+        createMockEvent({
+          id: '1',
+          title: '월간 스탠드업',
+          date: '2025-10-02',
+          repeat: { type: 'monthly', interval: 1, endDate: '2025-10-30' },
+        }),
+        createMockEvent({
+          id: '2',
+          title: '주간 스탠드업',
+          date: '2025-10-09',
+          repeat: { type: 'weekly', interval: 1, endDate: '2025-10-30' },
+        }),
+        createMockEvent({
+          id: '3',
+          title: '주간 스탠드업',
+          date: '2025-10-02',
+          repeat: { type: 'weekly', interval: 2, endDate: '2025-10-30' }, // 간격이 다름
+        }),
+        createMockEvent({
+          id: '4',
+          title: '월간 스탠드업',
+          date: '2025-10-02',
+          repeat: { type: 'monthly', interval: 1, endDate: '2025-10-30' },
+        }),
+        createMockEvent({
+          id: '5',
+          title: '월간 스탠드업',
+          date: '2025-10-02',
+          repeat: { type: 'monthly', interval: 1, endDate: '2025-10-30' },
+        }),
+      ];
+
+      const result = groupRepeatingEvents(events);
+
+      expect(Object.keys(result)).toHaveLength(3);
+
+      const values = Object.values(result).sort((a, b) => b.length - a.length);
+      expect(values[0]).toHaveLength(3);
+      expect(values[1]).toHaveLength(1);
+      expect(values[2]).toHaveLength(1);
+    });
   });
 });
