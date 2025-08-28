@@ -96,4 +96,28 @@ describe('groupRepeatingEvents >', () => {
       expect(values[2]).toHaveLength(1);
     });
   });
+
+  describe('단독 일정 처리', () => {
+    it('반복이 없는 단독 일정은 개별 그룹으로 처리한다', () => {
+      const events: Event[] = [
+        createMockEvent({
+          id: '1',
+          title: '일반 일정 1',
+          repeat: { type: 'none', interval: 0 },
+        }),
+        createMockEvent({
+          id: '2',
+          title: '일반 일정 2',
+          repeat: { type: 'none', interval: 0 },
+        }),
+      ];
+
+      const result = groupRepeatingEvents(events);
+
+      expect(Object.keys(result)).toHaveLength(2);
+
+      expect(result['1']).toHaveLength(1);
+      expect(result['2']).toHaveLength(1);
+    });
+  });
 });
