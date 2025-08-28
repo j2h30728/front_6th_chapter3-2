@@ -15,13 +15,19 @@ function getRepeatConfig(event: Event | EventForm) {
 export function generateRecurringDates(event: Event | EventForm) {
   const repeatType = event.repeat.type;
   const startData = event.date;
+  const interval = event.repeat.interval;
 
   if (repeatType === 'none') {
     return [startData];
   }
 
+  if (interval <= 0 || interval === Infinity) {
+    return [startData];
+  }
+
   if (repeatType === 'daily') {
     const { endDateTime, interval } = getRepeatConfig(event);
+
     const startDateTime = new Date(event.date).getTime();
 
     const dateArr = [];
@@ -88,5 +94,5 @@ export function generateRecurringDates(event: Event | EventForm) {
     return dateArr;
   }
 
-  return event;
+  return [startData];
 }
