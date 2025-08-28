@@ -1,0 +1,104 @@
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { render, screen, within } from '@testing-library/react';
+import { userEvent, UserEvent } from '@testing-library/user-event';
+import { SnackbarProvider } from 'notistack';
+
+import { setupMockHandlerRepeatEventCreation } from '../__mocks__/handlersUtils';
+import App from '../App';
+
+const theme = createTheme();
+
+const setup = () => {
+  const user = userEvent.setup();
+  return {
+    ...render(
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <SnackbarProvider>
+          <App />
+        </SnackbarProvider>
+      </ThemeProvider>
+    ),
+    user,
+  };
+};
+
+const saveRepeatingSchedule = async (
+  user: UserEvent,
+  form: {
+    title: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    description: string;
+    location: string;
+    category: string;
+    notificationTime?: number;
+    repeat: { type: 'daily' | 'weekly' | 'monthly' | 'yearly'; interval: number; endDate?: string };
+  }
+) => {
+  const { repeat, notificationTime, ...base } = form;
+
+  await user.click(screen.getAllByText('일정 추가')[0]);
+  await user.type(screen.getByLabelText('제목'), base.title);
+  await user.type(screen.getByLabelText('날짜'), base.date);
+  await user.type(screen.getByLabelText('시작 시간'), base.startTime);
+  await user.type(screen.getByLabelText('종료 시간'), base.endTime);
+  await user.type(screen.getByLabelText('설명'), base.description);
+  await user.type(screen.getByLabelText('위치'), base.location);
+  await user.click(screen.getByLabelText('카테고리'));
+  await user.click(within(screen.getByLabelText('카테고리')).getByRole('combobox'));
+  await user.click(screen.getByRole('option', { name: `${base.category}-option` }));
+
+  expect(screen.getByLabelText('반복 일정')).toBeChecked();
+
+  const repeatTypeSelect = within(screen.getByLabelText('반복 유형')).getByRole('combobox');
+  await user.click(repeatTypeSelect);
+
+  await user.click(
+    screen.getByRole('option', {
+      name: `${repeat.type}-option`,
+    })
+  );
+
+  await user.clear(screen.getByText('반복 간격').parentElement!.querySelector('input')!);
+  await user.type(
+    screen.getByText('반복 간격').parentElement!.querySelector('input')!,
+    String(repeat.interval)
+  );
+
+  if (repeat.endDate) {
+    await user.type(
+      screen.getByText('반복 종료일').parentElement!.querySelector('input')!,
+      repeat.endDate
+    );
+  }
+
+  if (notificationTime !== undefined) {
+    await user.click(screen.getByLabelText('알림 설정'));
+    await user.click(within(screen.getByLabelText('알림 설정')).getByRole('combobox'));
+    await user.click(screen.getByRole('option', { name: `${notificationTime}` }));
+  }
+
+  await user.click(screen.getByTestId('event-submit-button'));
+};
+
+describe('반복 일정', () => {
+  it('반복 일정을 등록한다', async () => {
+    setupMockHandlerRepeatEventCreation();
+    const { user } = setup();
+
+    await saveRepeatingSchedule(user, {
+      title: '주간 스탠드업',
+      date: '2025-10-02',
+      startTime: '09:00',
+      endTime: '09:15',
+      description: '팀 스탠드업',
+      location: '회의실 A',
+      category: '업무',
+      repeat: { type: 'weekly', interval: 1, endDate: '2025-10-30' },
+    });
+    expect(await screen.findByText('일정이 추가되었습니다.')).toBeInTheDocument();
+  });
+});
