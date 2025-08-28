@@ -210,4 +210,35 @@ describe('반복 일정', () => {
     expect(eventList.getAllByText('주간 스탠드업')).toHaveLength(2);
     expect(screen.getAllByLabelText('repeat-icon')).toHaveLength(4);
   });
+
+  it('반복 일정을 삭제하면 해당 일정만 삭제된다', async () => {
+    setupMockHandlerRepeatEventCreation();
+    const { user } = setup();
+
+    // 반복 일정 생성 (매주 목요일, 5주간)
+    await saveRepeatingSchedule(user, {
+      title: '주간 리뷰',
+      date: '2025-10-02',
+      startTime: '15:00',
+      endTime: '16:00',
+      description: '주간 업무 리뷰',
+      location: '회의실 C',
+      category: '업무',
+      repeat: { type: 'weekly', interval: 1, endDate: '2025-10-30' },
+    });
+
+    expect(await screen.findByText('일정이 추가되었습니다.')).toBeInTheDocument();
+
+    expect(screen.getAllByLabelText('repeat-icon')).toHaveLength(5);
+
+    const eventList = within(screen.getByTestId('event-list'));
+    expect(eventList.getByText('주간 리뷰')).toBeInTheDocument();
+
+    await user.click(screen.getByLabelText('Delete event'));
+
+    expect(screen.getAllByLabelText('repeat-icon')).toHaveLength(4);
+
+    // 이벤트 리스트에서 반복 일정 그룹은 여전히 표시되어야 함
+    expect(eventList.getByText('주간 리뷰')).toBeInTheDocument();
+  });
 });
