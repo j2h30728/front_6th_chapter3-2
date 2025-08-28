@@ -64,13 +64,17 @@ export function getFilteredEvents(
  */
 export const groupRepeatingEvents = (events: Event[]) => {
   const grouped: { [key: string]: Event[] } = {};
-
   events.forEach((event) => {
-    const key = `${event.title}-${event.repeat.type}-${event.repeat.interval}-${event.repeat.endDate}`;
-    if (!grouped[key]) {
-      grouped[key] = [];
+    if (event.repeat.type !== 'none') {
+      const key = `${event.title}-${event.repeat.type}-${event.repeat.interval}-${event.repeat.endDate}`;
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+      grouped[key].push(event);
+    } else {
+      const key = event.id;
+      grouped[key] = [event];
     }
-    grouped[key].push(event);
   });
   return grouped;
 };
