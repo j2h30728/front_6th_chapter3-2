@@ -66,12 +66,11 @@ export const groupRepeatingEvents = (events: Event[]) => {
   const grouped: { [key: string]: Event[] } = {};
 
   events.forEach((event) => {
-    const key = event.repeat.type + event.repeat.interval + event.repeat.endDate;
+    const key = `${event.title}-${event.repeat.type}-${event.repeat.interval}-${event.repeat.endDate}`;
     if (!grouped[key]) {
       grouped[key] = [];
     }
     grouped[key].push(event);
   });
-
   return grouped;
 };
