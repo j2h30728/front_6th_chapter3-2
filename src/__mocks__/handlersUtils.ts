@@ -93,7 +93,7 @@ export const setupMockHandlerDeletion = () => {
   );
 };
 
-// 반복 일정 생성만 처리
+// 반복 일정 생성, 수정, 삭제 모두 처리
 export const setupMockHandlerRepeatEventCreation = (initEvents = [] as Event[]) => {
   const mockEvents: Event[] = [...initEvents];
 
@@ -111,6 +111,29 @@ export const setupMockHandlerRepeatEventCreation = (initEvents = [] as Event[]) 
 
       mockEvents.push(...eventsWithIds);
       return HttpResponse.json(eventsWithIds, { status: 201 });
+    }),
+    http.put('/api/events/:id', async ({ params, request }) => {
+      const { id } = params;
+      const updatedEvent = (await request.json()) as Event;
+      const index = mockEvents.findIndex((event) => event.id === id);
+
+      if (index !== -1) {
+        mockEvents[index] = { ...mockEvents[index], ...updatedEvent };
+        return HttpResponse.json(mockEvents[index]);
+      }
+
+      return new HttpResponse(null, { status: 404 });
+    }),
+    http.delete('/api/events/:id', ({ params }) => {
+      const { id } = params;
+      const index = mockEvents.findIndex((event) => event.id === id);
+
+      if (index !== -1) {
+        mockEvents.splice(index, 1);
+        return new HttpResponse(null, { status: 204 });
+      }
+
+      return new HttpResponse(null, { status: 404 });
     })
   );
 };

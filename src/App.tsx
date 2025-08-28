@@ -76,7 +76,7 @@ function App() {
     category,
     setCategory,
     isRepeating,
-    setIsRepeating,
+    handleIsRepeatingChange,
     repeatType,
     setRepeatType,
     repeatInterval,
@@ -130,8 +130,8 @@ function App() {
       category,
       repeat: {
         type: isRepeating ? repeatType : 'none',
-        interval: repeatInterval,
-        endDate: repeatEndDate || undefined,
+        interval: isRepeating ? repeatInterval : 1,
+        endDate: isRepeating ? repeatEndDate || undefined : undefined,
       },
       notificationTime,
     };
@@ -418,12 +418,7 @@ function App() {
 
           <FormControl>
             <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isRepeating}
-                  onChange={(e) => setIsRepeating(e.target.checked)}
-                />
-              }
+              control={<Checkbox checked={isRepeating} onChange={handleIsRepeatingChange} />}
               label="반복 일정"
             />
           </FormControl>
@@ -451,7 +446,7 @@ function App() {
                 <FormLabel>반복 유형</FormLabel>
                 <Select
                   size="small"
-                  value={repeatType}
+                  value={isRepeating ? repeatType : 'none'}
                   onChange={(e) => setRepeatType(e.target.value as RepeatType)}
                   aria-label="반복 유형"
                 >
