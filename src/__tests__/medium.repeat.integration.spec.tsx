@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent, UserEvent } from '@testing-library/user-event';
 import { SnackbarProvider } from 'notistack';
+import { debug } from 'vitest-preview';
 
 import { setupMockHandlerRepeatEventCreation } from '../__mocks__/handlersUtils';
 import App from '../App';
@@ -171,5 +172,42 @@ describe('반복 일정', () => {
     repeatEvents.forEach((event) => {
       expect(event).toHaveTextContent('주간 스탠드업');
     });
+  });
+
+  it('반복 일정을 수정하면 단일 일정으로 변경된다', async () => {
+    setupMockHandlerRepeatEventCreation();
+    const { user } = setup();
+
+    await saveRepeatingSchedule(user, {
+      title: '주간 스탠드업',
+      date: '2025-10-02',
+      startTime: '09:00',
+      endTime: '09:15',
+      description: '팀 스탠드업',
+      location: '회의실 A',
+      category: '업무',
+      repeat: { type: 'weekly', interval: 1, endDate: '2025-10-30' },
+    });
+
+    const eventList = within(screen.getByTestId('event-list'));
+    expect(eventList.getAllByText('주간 스탠드업')).toHaveLength(1);
+    expect(screen.getAllByLabelText('repeat-icon')).toHaveLength(5);
+
+    await user.click(screen.getByLabelText('Edit event'));
+
+    // 수정 폼에서 반복 설정 해제
+    const repeatCheckbox = screen.getByLabelText('반복 일정');
+    await user.click(repeatCheckbox);
+    expect(repeatCheckbox).not.toBeChecked();
+
+    await user.click(screen.getByTestId('event-submit-button'));
+    debug();
+
+    expect(await screen.findByText('일정이 수정되었습니다.')).toBeInTheDocument();
+
+    // 반복 일정이 단일 일정으로 변경되었는지 확인
+    // 수정된 일정(단일) + 나머지 반복 그룹으로 2개가 리스트에 표시됨
+    expect(eventList.getAllByText('주간 스탠드업')).toHaveLength(2);
+    expect(screen.getAllByLabelText('repeat-icon')).toHaveLength(4);
   });
 });
